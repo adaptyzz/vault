@@ -1,0 +1,298 @@
+local WeaponName
+local FunctionCall
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local UIPath
+
+if LocalPlayer.PlayerGui.MainGUI.Game:FindFirstChild("Inventory") ~= nil then
+    UIPath = LocalPlayer.PlayerGui.MainGUI.Game.Inventory.Main
+else
+    UIPath = LocalPlayer.PlayerGui.MainGUI.Lobby.Screens.Inventory.Main
+end
+
+local function VisualDupe()
+    wait(math.random(1, 3))
+    for i,v in pairs(UIPath.Weapons.Items.Container:GetChildren()) do
+        for i,v in pairs(v.Container:GetChildren()) do
+            if v.Name == "Christmas" or v.Name == "Halloween" then
+                for i,v in pairs(v.Container:GetChildren()) do
+                    if v:IsA("Frame") and v.ItemName.Label.Text == WeaponName then
+                        local amount = v.Container.Amount.Text
+                        if amount == "" or amount == "None" then
+                            v.Container.Amount.Text = "x2"
+                        else
+                            local num = tonumber(amount:match("x(%d+)"))
+                            if num then
+                                v.Container.Amount.Text = "x" .. tostring(num + 1)
+                            end
+                        end
+                    end
+                end
+            else
+                if v:IsA("Frame") and v.ItemName.Label.Text == WeaponName then
+                    local amount = v.Container.Amount.Text
+                    if amount == "" or amount == "None" then
+                        v.Container.Amount.Text = "x2"
+                    else
+                        local num = tonumber(amount:match("x(%d+)"))
+                        if num then
+                            v.Container.Amount.Text = "x" .. tostring(num + 1)
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
+local function InventoryDupe()
+    wait(math.random(3, 5))
+    for i,v in pairs(UIPath.Weapons.Items.Container:GetChildren()) do
+        for i,v in pairs(v.Container:GetChildren()) do
+            if v.Name == "Christmas" or v.Name == "Halloween" then
+                for i,v in pairs(v.Container:GetChildren()) do
+                    if v:IsA("Frame") then
+                        if v.ItemName.Label.Text ~= "Default Knife" and v.ItemName.Label.Text ~= "Default Gun" then
+                            local amount = v.Container.Amount.Text
+                            if amount == "" or amount == "None" then
+                                v.Container.Amount.Text = "x2"
+                            else
+                                local num = tonumber(amount:match("x(%d+)"))
+                                if num then
+                                    v.Container.Amount.Text = "x" .. tostring(num * 2)
+                                end
+                            end
+                        end
+                    end
+                end
+            else
+                if v:IsA("Frame") then
+                    if v.ItemName.Label.Text ~= "Default Knife" and v.ItemName.Label.Text ~= "Default Gun" then
+                        local amount = v.Container.Amount.Text
+                        if amount == "" or amount == "None" then
+                            v.Container.Amount.Text = "x2"
+                        else
+                            local num = tonumber(amount:match("x(%d+)"))
+                            if num then
+                                v.Container.Amount.Text = "x" .. tostring(num * 2)
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    for i,v in pairs(UIPath.Pets.Items.Container.Current.Container:GetChildren()) do
+        if v:IsA("Frame") then
+            local amount = v.Container.Amount.Text
+            if amount == "" or amount == "None" then
+                v.Container.Amount.Text = "x2"
+            else
+                local num = tonumber(amount:match("x(%d+)"))
+                if num then
+                    v.Container.Amount.Text = "x" .. tostring(num * 2)
+                end
+            end
+        end
+    end
+end
+
+local OrionLib = loadstring(game:HttpGet("https://pastebin.com/raw/WRUyYTdY"))()
+
+OrionLib:MakeNotification({
+    Name = "tuffboi | MM2",
+    Content = "MM2 Utility Loaded",
+    Image = "rbxassetid://7733964719",
+    Time = 5
+})
+
+local Window = OrionLib:MakeWindow({
+    Name = "AMETHYX // xyenixz",
+    HidePremium = false,
+    IntroText = "tuffboi",
+    SaveConfig = true,
+    ConfigFolder = "tuffboiConfig"
+})
+
+-- INFO TAB
+local InfoTab = Window:MakeTab({
+    Name = "Information",
+    Icon = "rbxassetid://7733964719",
+    PremiumOnly = false
+})
+
+InfoTab:AddSection({ Name = "Script Info" })
+InfoTab:AddParagraph("Status", "All systems operational.")
+InfoTab:AddLabel("UI Build: AMETHYX")
+
+-- DUPE TAB
+local DupeTab = Window:MakeTab({
+    Name = "Weapon Dupe",
+    Icon = "rbxassetid://7734022107",
+    PremiumOnly = false
+})
+
+DupeTab:AddSection({ Name = "Weapon Duplication" })
+
+DupeTab:AddTextbox({
+    Name = "Weapon Name",
+    Default = "Harvester",
+    TextDisappear = false,
+    Callback = function(Value)
+        WeaponName = Value
+        OrionLib:MakeNotification({
+            Name = "AMETHYX // xyenixz",
+            Content = "Weapon Selected: "..tostring(WeaponName),
+            Image = "rbxassetid://7733964719",
+            Time = 5
+        })
+    end
+})
+
+DupeTab:AddTextbox({
+    Name = "Dupe Amount",
+    Default = "5",
+    TextDisappear = false,
+    Callback = function(Value)
+        FunctionCall = tonumber(Value)
+        OrionLib:MakeNotification({
+            Name = "AMETHYX // xyenixz",
+            Content = "Amount Selected: "..tostring(FunctionCall),
+            Image = "rbxassetid://7733964719",
+            Time = 5
+        })
+    end
+})
+
+DupeTab:AddButton({
+    Name = "Start Duplication",
+    Callback = function()
+        for i = 1, FunctionCall do
+            VisualDupe()
+        end
+    end
+})
+
+DupeTab:AddSection({ Name = "Inventory Duplication" })
+
+DupeTab:AddButton({
+    Name = "Duplicate Inventory",
+    Callback = function()
+        InventoryDupe()
+    end
+})
+
+-- AUTOFARM TAB
+local AutoFarmTab = Window:MakeTab({
+    Name = "AutoFarm",
+    Icon = "rbxassetid://7733673056",
+    PremiumOnly = false
+})
+
+AutoFarmTab:AddSection({ Name = "Scripts" })
+
+AutoFarmTab:AddButton({
+    Name = "Load Nexus",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/s-o-a-b/nexus/main/loadstring"))()
+    end
+})
+
+AutoFarmTab:AddButton({
+    Name = "Load YARHM",
+    Callback = function()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/Joystickplays/psychic-octo-invention/main/yarhm.lua"))()
+    end
+})
+
+-- SPAWNER TAB
+local SpawnerTab = Window:MakeTab({
+    Name = "Weapon Spawner",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+SpawnerTab:AddSection({ Name = "Spawner" })
+
+SpawnerTab:AddButton({
+    Name = "Spawn Weapons",
+    Callback = function()
+        local DataBase = require(game:GetService("ReplicatedStorage").Database.Sync.Item)
+        local PlayerData = require(game:GetService("ReplicatedStorage").Modules.ProfileData)
+        local newOwned = {}
+
+        for i in pairs(DataBase) do
+            newOwned[i] = math.random(1,150)
+        end
+
+        game:GetService("RunService"):BindToRenderStep("InventoryUpdate", 0, function()
+            PlayerData.Weapons.Owned = newOwned
+        end)
+
+        game.Players.LocalPlayer.Character:BreakJoints()
+    end
+})
+
+-- CHANGER TAB
+local ChangerTab = Window:MakeTab({
+    Name = "Weapon Changer",
+    Icon = "rbxassetid://4483345998",
+    PremiumOnly = false
+})
+
+ChangerTab:AddSection({ Name = "Changer" })
+
+local Weapons = require(game:GetService("ReplicatedStorage").Database.Sync.Item)
+
+local function NameMatch(name, search)
+    return name:lower():find(search:lower(), 1, true) ~= nil
+end
+
+local WeaponNames = {}
+for k in pairs(Weapons) do
+    table.insert(WeaponNames, k)
+end
+
+local fromWeapon = ""
+local toWeapon = ""
+
+ChangerTab:AddTextbox({
+    Name = "From Weapon",
+    Callback = function(v)
+        fromWeapon = v
+    end
+})
+
+ChangerTab:AddDropdown({
+    Name = "To Weapon",
+    Options = WeaponNames,
+    Callback = function(v)
+        toWeapon = v
+    end
+})
+
+ChangerTab:AddButton({
+    Name = "Change Weapon",
+    Callback = function()
+        for w in pairs(Weapons) do
+            if NameMatch(w, fromWeapon) then
+                Weapons[w] = table.clone(Weapons[toWeapon])
+                game:GetService("ReplicatedStorage").Remotes.Inventory.Equip:FireServer(toWeapon)
+            end
+        end
+    end
+})
+
+-- CHANGELOG TAB
+local ChangelogsTab = Window:MakeTab({
+    Name = "Changelog",
+    Icon = "rbxassetid://8997388036",
+    PremiumOnly = false
+})
+
+ChangelogsTab:AddSection({ Name = "Updates" })
+ChangelogsTab:AddParagraph("Notes", "UI renamed and cleaned.")
+ChangelogsTab:AddParagraph("Credits", "AMETHYX // xyenixz")
+
+OrionLib:Init()
