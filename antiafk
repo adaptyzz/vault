@@ -1,6 +1,10 @@
-        Callback = function()
-            local VirtualUser = game:GetService("VirtualUser")
-            LocalPlayer.Idled:Connect(function()
-                VirtualUser:CaptureController()
-                VirtualUser:ClickButton2(Vector2.new())
-            end)
+Callback = function()
+    local LocalPlayer = game.Players.LocalPlayer
+    local VirtualUser = game:GetService("VirtualUser")
+    
+    LocalPlayer.Idled:Connect(function()
+        VirtualUser:CaptureController()
+        VirtualUser:ClickButton2(Vector2.new())
+        print("Anti-AFK triggered!")
+    end)
+end
