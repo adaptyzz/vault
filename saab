@@ -1,0 +1,433 @@
+-- Premium ROBLOX GUI with Adopt Me Hub & Pet Spawner
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+
+-- Create ScreenGui
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "PremiumHub"
+ScreenGui.Parent = game.CoreGui
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+ScreenGui.ResetOnSpawn = false
+
+-- Main Frame (Container)
+local MainFrame = Instance.new("Frame")
+MainFrame.Name = "MainFrame"
+MainFrame.Parent = ScreenGui
+MainFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+MainFrame.Size = UDim2.new(0, 450, 0, 420)
+MainFrame.BackgroundColor3 = Color3.fromRGB(8, 8, 12)
+MainFrame.BorderSizePixel = 0
+MainFrame.Active = true
+MainFrame.Draggable = true
+MainFrame.ClipsDescendants = false
+
+-- Add corner radius
+local MainCorner = Instance.new("UICorner")
+MainCorner.CornerRadius = UDim.new(0, 20)
+MainCorner.Parent = MainFrame
+
+-- Animated gradient background
+local BackgroundGradient = Instance.new("UIGradient")
+BackgroundGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(15, 15, 20)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(8, 8, 12)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(12, 8, 15))
+}
+BackgroundGradient.Rotation = 45
+BackgroundGradient.Parent = MainFrame
+
+-- Animated gradient rotation
+spawn(function()
+    while MainFrame.Parent do
+        for i = 0, 360, 1 do
+            if not MainFrame.Parent then break end
+            BackgroundGradient.Rotation = i
+            wait(0.05)
+        end
+    end
+end)
+
+-- Premium border with gradient
+local Border = Instance.new("UIStroke")
+Border.Color = Color3.fromRGB(80, 80, 100)
+Border.Thickness = 1.5
+Border.Transparency = 0.3
+Border.Parent = MainFrame
+
+local BorderGradient = Instance.new("UIGradient")
+BorderGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(100, 80, 150)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(80, 100, 180)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(100, 80, 150))
+}
+BorderGradient.Rotation = 0
+BorderGradient.Parent = Border
+
+-- Animate border gradient
+spawn(function()
+    while Border.Parent do
+        for i = 0, 360, 2 do
+            if not Border.Parent then break end
+            BorderGradient.Rotation = i
+            wait(0.03)
+        end
+    end
+end)
+
+-- Accent line at top
+local AccentLine = Instance.new("Frame")
+AccentLine.Name = "AccentLine"
+AccentLine.Parent = MainFrame
+AccentLine.Size = UDim2.new(1, 0, 0, 2)
+AccentLine.Position = UDim2.new(0, 0, 0, 50)
+AccentLine.BackgroundColor3 = Color3.fromRGB(120, 100, 180)
+AccentLine.BorderSizePixel = 0
+
+local AccentGradient = Instance.new("UIGradient")
+AccentGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(100, 80, 200)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(150, 100, 255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(100, 80, 200))
+}
+AccentGradient.Parent = AccentLine
+
+-- Background pattern overlay
+local Pattern = Instance.new("Frame")
+Pattern.Name = "Pattern"
+Pattern.Parent = MainFrame
+Pattern.Size = UDim2.new(1, 0, 1, 0)
+Pattern.BackgroundTransparency = 0.97
+Pattern.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+Pattern.BorderSizePixel = 0
+Pattern.ZIndex = 0
+
+local PatternCorner = Instance.new("UICorner")
+PatternCorner.CornerRadius = UDim.new(0, 20)
+PatternCorner.Parent = Pattern
+
+-- Title Bar
+local TitleBar = Instance.new("Frame")
+TitleBar.Name = "TitleBar"
+TitleBar.Parent = MainFrame
+TitleBar.Size = UDim2.new(1, 0, 0, 50)
+TitleBar.BackgroundTransparency = 1
+TitleBar.BorderSizePixel = 0
+
+-- Title Text with icon
+local Title = Instance.new("TextLabel")
+Title.Name = "Title"
+Title.Parent = TitleBar
+Title.Size = UDim2.new(1, -50, 1, 0)
+Title.Position = UDim2.new(0, 20, 0, 0)
+Title.BackgroundTransparency = 1
+Title.Text = "⬡ AMETHYX HUB"
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 18
+Title.Font = Enum.Font.SourceSansBold
+Title.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Title gradient
+local TitleGradient = Instance.new("UIGradient")
+TitleGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(200, 180, 255)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(255, 255, 255)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(180, 200, 255))
+}
+TitleGradient.Parent = Title
+
+-- Version badge
+local Version = Instance.new("TextLabel")
+Version.Parent = TitleBar
+Version.Position = UDim2.new(0, 145, 0, 15)
+Version.Size = UDim2.new(0, 40, 0, 20)
+Version.BackgroundColor3 = Color3.fromRGB(100, 80, 180)
+Version.Text = "V2"
+Version.TextColor3 = Color3.fromRGB(255, 255, 255)
+Version.TextSize = 11
+Version.Font = Enum.Font.SourceSansBold
+Version.BorderSizePixel = 0
+
+local VersionCorner = Instance.new("UICorner")
+VersionCorner.CornerRadius = UDim.new(0, 4)
+VersionCorner.Parent = Version
+
+-- Close Button
+local CloseButton = Instance.new("TextButton")
+CloseButton.Name = "CloseButton"
+CloseButton.Parent = TitleBar
+CloseButton.AnchorPoint = Vector2.new(1, 0.5)
+CloseButton.Position = UDim2.new(1, -15, 0.5, 0)
+CloseButton.Size = UDim2.new(0, 32, 0, 32)
+CloseButton.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+CloseButton.Text = "×"
+CloseButton.TextColor3 = Color3.fromRGB(200, 200, 200)
+CloseButton.TextSize = 22
+CloseButton.Font = Enum.Font.SourceSansBold
+CloseButton.BorderSizePixel = 0
+
+local CloseCorner = Instance.new("UICorner")
+CloseCorner.CornerRadius = UDim.new(0, 8)
+CloseCorner.Parent = CloseButton
+
+local CloseBorder = Instance.new("UIStroke")
+CloseBorder.Color = Color3.fromRGB(60, 60, 70)
+CloseBorder.Thickness = 1
+CloseBorder.Transparency = 0.5
+CloseBorder.Parent = CloseButton
+
+-- Button Container
+local ButtonContainer = Instance.new("Frame")
+ButtonContainer.Name = "ButtonContainer"
+ButtonContainer.Parent = MainFrame
+ButtonContainer.Position = UDim2.new(0, 0, 0, 70)
+ButtonContainer.Size = UDim2.new(1, 0, 1, -85)
+ButtonContainer.BackgroundTransparency = 1
+
+local ButtonLayout = Instance.new("UIListLayout")
+ButtonLayout.Parent = ButtonContainer
+ButtonLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+ButtonLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+ButtonLayout.Padding = UDim.new(0, 15)
+ButtonLayout.SortOrder = Enum.SortOrder.LayoutOrder
+
+-- Function to create premium button
+local function createButton(name, text, icon, order)
+    local Button = Instance.new("TextButton")
+    Button.Name = name
+    Button.Parent = ButtonContainer
+    Button.Size = UDim2.new(0, 400, 0, 65)
+    Button.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+    Button.Text = ""
+    Button.BorderSizePixel = 0
+    Button.LayoutOrder = order
+    Button.AutoButtonColor = false
+    Button.ClipsDescendants = true
+    
+    local ButtonCorner = Instance.new("UICorner")
+    ButtonCorner.CornerRadius = UDim.new(0, 12)
+    ButtonCorner.Parent = Button
+    
+    -- Button gradient overlay
+    local ButtonGradient = Instance.new("UIGradient")
+    ButtonGradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 18, 28)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(15, 15, 20)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(18, 15, 25))
+    }
+    ButtonGradient.Rotation = 90
+    ButtonGradient.Parent = Button
+    
+    -- Button border with gradient
+    local ButtonBorder = Instance.new("UIStroke")
+    ButtonBorder.Color = Color3.fromRGB(60, 60, 80)
+    ButtonBorder.Thickness = 1.5
+    ButtonBorder.Transparency = 0.5
+    ButtonBorder.Parent = Button
+    
+    local BorderGrad = Instance.new("UIGradient")
+    BorderGrad.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(80, 60, 120)),
+        ColorSequenceKeypoint.new(0.5, Color3.fromRGB(100, 80, 150)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(80, 60, 120))
+    }
+    BorderGrad.Parent = ButtonBorder
+    
+    -- Shine effect overlay
+    local Shine = Instance.new("Frame")
+    Shine.Name = "Shine"
+    Shine.Parent = Button
+    Shine.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    Shine.BackgroundTransparency = 0.95
+    Shine.BorderSizePixel = 0
+    Shine.Size = UDim2.new(0.3, 0, 2, 0)
+    Shine.Position = UDim2.new(-0.3, 0, -0.5, 0)
+    Shine.Rotation = 20
+    
+    -- Icon container
+    local IconContainer = Instance.new("Frame")
+    IconContainer.Parent = Button
+    IconContainer.Position = UDim2.new(0, 20, 0.5, 0)
+    IconContainer.AnchorPoint = Vector2.new(0, 0.5)
+    IconContainer.Size = UDim2.new(0, 45, 0, 45)
+    IconContainer.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+    IconContainer.BorderSizePixel = 0
+    
+    local IconCorner = Instance.new("UICorner")
+    IconCorner.CornerRadius = UDim.new(0, 10)
+    IconCorner.Parent = IconContainer
+    
+    local IconGrad = Instance.new("UIGradient")
+    IconGrad.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(80, 60, 140)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(60, 80, 160))
+    }
+    IconGrad.Rotation = 45
+    IconGrad.Parent = IconContainer
+    
+    -- Icon text
+    local Icon = Instance.new("TextLabel")
+    Icon.Parent = IconContainer
+    Icon.Size = UDim2.new(1, 0, 1, 0)
+    Icon.BackgroundTransparency = 1
+    Icon.Text = icon
+    Icon.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Icon.TextSize = 24
+    Icon.Font = Enum.Font.SourceSansBold
+    
+    -- Button text
+    local ButtonText = Instance.new("TextLabel")
+    ButtonText.Parent = Button
+    ButtonText.Size = UDim2.new(1, -140, 1, 0)
+    ButtonText.Position = UDim2.new(0, 75, 0, 0)
+    ButtonText.BackgroundTransparency = 1
+    ButtonText.Text = text
+    ButtonText.TextColor3 = Color3.fromRGB(230, 230, 240)
+    ButtonText.TextSize = 16
+    ButtonText.Font = Enum.Font.SourceSansSemibold
+    ButtonText.TextXAlignment = Enum.TextXAlignment.Left
+    
+    -- Arrow indicator
+    local Arrow = Instance.new("TextLabel")
+    Arrow.Parent = Button
+    Arrow.AnchorPoint = Vector2.new(1, 0.5)
+    Arrow.Position = UDim2.new(1, -20, 0.5, 0)
+    Arrow.Size = UDim2.new(0, 30, 0, 30)
+    Arrow.BackgroundTransparency = 1
+    Arrow.Text = "→"
+    Arrow.TextColor3 = Color3.fromRGB(150, 150, 170)
+    Arrow.TextSize = 22
+    Arrow.Font = Enum.Font.SourceSansBold
+    
+    return Button, ButtonBorder, ButtonText, Arrow, Shine, IconContainer
+end
+
+-- Create buttons
+local AdoptMeButton, AdoptMeBorder, AdoptMeText, AdoptMeArrow, AdoptMeShine, AdoptMeIcon = createButton("AdoptMeHub", "Auto Moreira Method", "🏠", 1)
+local PetSpawnerButton, PetSpawnerBorder, PetSpawnerText, PetSpawnerArrow, PetSpawnerShine, PetSpawnerIcon = createButton("PetSpawner", "Brainrot Spawner", "🐾", 2)
+local TradeFreezeButton, TradeFreezeBorder, TradeFreezeText, TradeFreezeArrow, TradeFreezeShine, TradeFreezeIcon = createButton("TradeFreeze", "CryHub Lagger", "🔒", 3)
+local AdoptUtilsButton, AdoptUtilsBorder, AdoptUtilsText, AdoptUtilsArrow, AdoptUtilsShine, AdoptUtilsIcon = createButton("AdoptUtils", "Soon...", "⚙️", 4)
+
+-- Animation tweens
+local tweenInfo = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+local fastTween = TweenInfo.new(0.15, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+
+-- Hover effects
+local function addHoverEffect(button, border, text, arrow, shine, iconContainer)
+    button.MouseEnter:Connect(function()
+        TweenService:Create(button, tweenInfo, {BackgroundColor3 = Color3.fromRGB(20, 20, 28)}):Play()
+        TweenService:Create(border, tweenInfo, {Transparency = 0.2}):Play()
+        TweenService:Create(text, tweenInfo, {TextColor3 = Color3.fromRGB(255, 255, 255)}):Play()
+        TweenService:Create(arrow, tweenInfo, {
+            TextColor3 = Color3.fromRGB(255, 255, 255),
+            Position = UDim2.new(1, -15, 0.5, 0)
+        }):Play()
+        TweenService:Create(iconContainer, tweenInfo, {BackgroundColor3 = Color3.fromRGB(35, 35, 50)}):Play()
+        
+        -- Shine animation
+        TweenService:Create(shine, TweenInfo.new(0.6, Enum.EasingStyle.Linear), {
+            Position = UDim2.new(1.3, 0, -0.5, 0)
+        }):Play()
+    end)
+    
+    button.MouseLeave:Connect(function()
+        TweenService:Create(button, tweenInfo, {BackgroundColor3 = Color3.fromRGB(15, 15, 20)}):Play()
+        TweenService:Create(border, tweenInfo, {Transparency = 0.5}):Play()
+        TweenService:Create(text, tweenInfo, {TextColor3 = Color3.fromRGB(230, 230, 240)}):Play()
+        TweenService:Create(arrow, tweenInfo, {
+            TextColor3 = Color3.fromRGB(150, 150, 170),
+            Position = UDim2.new(1, -20, 0.5, 0)
+        }):Play()
+        TweenService:Create(iconContainer, tweenInfo, {BackgroundColor3 = Color3.fromRGB(25, 25, 35)}):Play()
+        
+        -- Reset shine
+        shine.Position = UDim2.new(-0.3, 0, -0.5, 0)
+    end)
+end
+
+addHoverEffect(AdoptMeButton, AdoptMeBorder, AdoptMeText, AdoptMeArrow, AdoptMeShine, AdoptMeIcon)
+addHoverEffect(PetSpawnerButton, PetSpawnerBorder, PetSpawnerText, PetSpawnerArrow, PetSpawnerShine, PetSpawnerIcon)
+addHoverEffect(TradeFreezeButton, TradeFreezeBorder, TradeFreezeText, TradeFreezeArrow, TradeFreezeShine, TradeFreezeIcon)
+addHoverEffect(AdoptUtilsButton, AdoptUtilsBorder, AdoptUtilsText, AdoptUtilsArrow, AdoptUtilsShine, AdoptUtilsIcon)
+
+-- Button click effects
+local function addClickEffect(button)
+    button.MouseButton1Click:Connect(function()
+        TweenService:Create(button, fastTween, {Size = UDim2.new(0, 395, 0, 62)}):Play()
+        wait(0.1)
+        TweenService:Create(button, fastTween, {Size = UDim2.new(0, 400, 0, 65)}):Play()
+    end)
+end
+
+addClickEffect(AdoptMeButton)
+addClickEffect(PetSpawnerButton)
+addClickEffect(TradeFreezeButton)
+addClickEffect(AdoptUtilsButton)
+
+-- Close button functionality
+CloseButton.MouseButton1Click:Connect(function()
+    TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+        Size = UDim2.new(0, 0, 0, 0),
+        Rotation = -45
+    }):Play()
+    wait(0.3)
+    ScreenGui:Destroy()
+end)
+
+-- Close button hover
+CloseButton.MouseEnter:Connect(function()
+    TweenService:Create(CloseButton, tweenInfo, {
+        BackgroundColor3 = Color3.fromRGB(180, 50, 50)
+    }):Play()
+    TweenService:Create(CloseButton, tweenInfo, {TextColor3 = Color3.fromRGB(255, 255, 255)}):Play()
+    TweenService:Create(CloseBorder, tweenInfo, {Transparency = 0}):Play()
+end)
+
+CloseButton.MouseLeave:Connect(function()
+    TweenService:Create(CloseButton, tweenInfo, {
+        BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+    }):Play()
+    TweenService:Create(CloseButton, tweenInfo, {TextColor3 = Color3.fromRGB(200, 200, 200)}):Play()
+    TweenService:Create(CloseBorder, tweenInfo, {Transparency = 0.5}):Play()
+end)
+
+-- Execute scripts
+AdoptMeButton.MouseButton1Click:Connect(function()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/adaptyzz/vault/refs/heads/main/moreira'))()
+end)
+
+PetSpawnerButton.MouseButton1Click:Connect(function()
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/adaptyzz/vault/refs/heads/main/sabspowner'))()
+end)
+
+TradeFreezeButton.MouseButton1Click:Connect(function()
+    loadstring(game:HttpGet("https://pastebin.com/raw/HdwLkDnm"))()
+end)
+
+AdoptUtilsButton.MouseButton1Click:Connect(function()
+    print("soon")
+end)
+
+-- Credits label at bottom
+local Credits = Instance.new("TextLabel")
+Credits.Parent = MainFrame
+Credits.Size = UDim2.new(1, 0, 0, 15)
+Credits.Position = UDim2.new(0, 0, 1, -18)
+Credits.BackgroundTransparency = 1
+Credits.Text = "by AMETHYX // xyenixz"
+Credits.TextColor3 = Color3.fromRGB(150, 150, 170)
+Credits.TextSize = 11
+Credits.Font = Enum.Font.SourceSans
+Credits.TextTransparency = 0.5
+
+-- Entrance animation
+MainFrame.Size = UDim2.new(0, 0, 0, 0)
+MainFrame.Rotation = 45
+MainFrame.BackgroundTransparency = 1
+TweenService:Create(MainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+    Size = UDim2.new(0, 450, 0, 420),
+    Rotation = 0,
+    BackgroundTransparency = 0
+}):Play()
+
+print("Premium AMETHYX Hub loaded successfully!")
