@@ -1,0 +1,904 @@
+--[[
+
+    WindUI Example (wip)
+    
+]]
+
+
+local WindUI
+
+do
+    local ok, result = pcall(function()
+        return require("./src/Init")
+    end)
+    
+    if ok then
+        WindUI = result
+    else 
+        WindUI = loadstring(game:HttpGet("https://raw.githubusercontent.com/Footagesus/WindUI/main/dist/main.lua"))()
+    end
+end
+
+
+function createPopup()
+    return WindUI:Popup({
+        Title = "Welcome to the WindUI!",
+        Icon = "bird",
+        Content = "Hello!",
+        Buttons = {
+            {
+                Title = "Hahaha",
+                Icon = "bird",
+                Variant = "Tertiary"
+            },
+            {
+                Title = "Hahaha",
+                Icon = "bird",
+                Variant = "Tertiary"
+            },
+            {
+                Title = "Hahaha",
+                Icon = "bird",
+                Variant = "Tertiary"
+            }
+        }
+    })
+end
+
+
+
+-- */  Window  /* --
+local Window = WindUI:CreateWindow({
+    Title = "AMETHYX",
+    --Author = "by .ftgs • Footagesus",
+    Folder = "ftgshub",
+    Icon = "solar:folder-2-bold-duotone",
+    --IconSize = 22*2,
+    NewElements = true,
+    --Size = UDim2.fromOffset(700,700),
+    
+    HideSearchBar = false,
+    
+    OpenButton = {
+        Title = "Open .ftgs hub UI", -- can be changed
+        CornerRadius = UDim.new(1,0), -- fully rounded
+        StrokeThickness = 3, -- removing outline
+        Enabled = true, -- enable or disable openbutton
+        Draggable = true,
+        OnlyMobile = false,
+        
+        Color = ColorSequence.new( -- gradient
+            Color3.fromHex("#30FF6A"), 
+            Color3.fromHex("#e7ff2f")
+        )
+    },
+    Topbar = {
+        Height = 44,
+        ButtonsType = "Mac", -- Default or Mac
+    },
+
+    --[[
+    KeySystem = {
+        Title = "Key System Example  |  WindUI Example",
+        Note = "Key System. Key: 1234",
+        KeyValidator = function(EnteredKey)
+            if EnteredKey == "1234" then
+                createPopup()
+                return true
+            end
+            return false
+            -- return EnteredKey == "1234" -- if key == "1234" then return true else return false end
+        end
+    }
+    ]]
+})
+
+--createPopup()
+
+--Window:SetUIScale(.8)
+
+-- */  Tags  /* --
+-- Removed version tag
+
+-- */  Theme (soon)  /* --
+do
+    --[[WindUI:AddTheme({
+        Name = "Stylish",
+        
+        Accent = Color3.fromHex("#3b82f6"), 
+        Dialog = Color3.fromHex("#1a1a1a"), 
+        Outline = Color3.fromHex("#3b82f6"),
+        Text = Color3.fromHex("#f8fafc"),  
+        Placeholder = Color3.fromHex("#94a3b8"),
+        Button = Color3.fromHex("#334155"), 
+        Icon = Color3.fromHex("#60a5fa"), 
+        
+        WindowBackground = Color3.fromHex("#0f172a"),
+        
+        TopbarButtonIcon = Color3.fromHex("#60a5fa"),
+        TopbarTitle = Color3.fromHex("#f8fafc"),
+        TopbarAuthor = Color3.fromHex("#94a3b8"),
+        TopbarIcon = Color3.fromHex("#3b82f6"),
+        
+        TabBackground = Color3.fromHex("#1e293b"),    
+        TabTitle = Color3.fromHex("#f8fafc"),
+        TabIcon = Color3.fromHex("#60a5fa"),
+        
+        ElementBackground = Color3.fromHex("#1e293b"),
+        ElementTitle = Color3.fromHex("#f8fafc"),
+        ElementDesc = Color3.fromHex("#cbd5e1"),
+        ElementIcon = Color3.fromHex("#60a5fa"),
+    })--]]
+    
+    -- WindUI:SetTheme("Stylish")
+end
+
+
+-- */  Colors  /* --
+local Purple = Color3.fromHex("#7775F2")
+local Yellow = Color3.fromHex("#ECA201")
+local Green = Color3.fromHex("#10C550")
+local Grey = Color3.fromHex("#83889E")
+local Blue = Color3.fromHex("#257AF7")
+local Red = Color3.fromHex("#EF4F1D")
+
+
+-- */ Other Functions /* --
+local function parseJSON(luau_table, indent, level, visited)
+    indent = indent or 2
+    level = level or 0
+    visited = visited or {}
+    
+    local currentIndent = string.rep(" ", level * indent)
+    local nextIndent = string.rep(" ", (level + 1) * indent)
+    
+    if luau_table == nil then
+        return "null"
+    end
+    
+    local dataType = type(luau_table)
+    
+    if dataType == "table" then
+        if visited[luau_table] then
+            return "\"[Circular Reference]\""
+        end
+        
+        visited[luau_table] = true
+        
+        local isArray = true
+        local maxIndex = 0
+        
+        for k, _ in pairs(luau_table) do
+            if type(k) == "number" and k > maxIndex then
+                maxIndex = k
+            end
+            if type(k) ~= "number" or k <= 0 or math.floor(k) ~= k then
+                isArray = false
+                break
+            end
+        end
+        
+        local count = 0
+        for _ in pairs(luau_table) do
+            count = count + 1
+        end
+        if count ~= maxIndex and isArray then
+            isArray = false
+        end
+        
+        if count == 0 then
+            return "{}"
+        end
+        
+        if isArray then
+            if count == 0 then
+                return "[]"
+            end
+            
+            local result = "[\n"
+            
+            for i = 1, maxIndex do
+                result = result .. nextIndent .. parseJSON(luau_table[i], indent, level + 1, visited)
+                if i < maxIndex then
+                    result = result .. ","
+                end
+                result = result .. "\n"
+            end
+            
+            result = result .. currentIndent .. "]"
+            return result
+        else
+            local result = "{\n"
+            local first = true
+            
+            local keys = {}
+            for k in pairs(luau_table) do
+                table.insert(keys, k)
+            end
+            table.sort(keys, function(a, b)
+                if type(a) == type(b) then
+                    return tostring(a) < tostring(b)
+                else
+                    return type(a) < type(b)
+                end
+            end)
+            
+            for _, k in ipairs(keys) do
+                local v = luau_table[k]
+                if not first then
+                    result = result .. ",\n"
+                else
+                    first = false
+                end
+                
+                if type(k) == "string" then
+                    result = result .. nextIndent .. "\"" .. k .. "\": "
+                else
+                    result = result .. nextIndent .. "\"" .. tostring(k) .. "\": "
+                end
+                
+                result = result .. parseJSON(v, indent, level + 1, visited)
+            end
+            
+            result = result .. "\n" .. currentIndent .. "}"
+            return result
+        end
+    elseif dataType == "string" then
+        local escaped = luau_table:gsub("\\", "\\\\")
+        escaped = escaped:gsub("\"", "\\\"")
+        escaped = escaped:gsub("\n", "\\n")
+        escaped = escaped:gsub("\r", "\\r")
+        escaped = escaped:gsub("\t", "\\t")
+        
+        return "\"" .. escaped .. "\""
+    elseif dataType == "number" then
+        return tostring(luau_table)
+    elseif dataType == "boolean" then
+        return luau_table and "true" or "false"
+    elseif dataType == "function" then
+        return "\"function\""
+    else
+        return "\"" .. dataType .. "\""
+    end
+end
+
+local function tableToClipboard(luau_table, indent)
+    indent = indent or 4
+    local jsonString = parseJSON(luau_table, indent)
+    setclipboard(jsonString)
+    return jsonString
+end
+
+
+
+
+-- */  Elements Section  /* --
+local ElementsSection = Window:Section({
+    Title = "AMETHYX (Open Me)",
+})
+
+
+
+
+-- */  Universal Tab  /* --
+do
+    local UniversalTab = ElementsSection:Tab({
+        Title = "Universal",
+        Icon = "solar:planet-2-bold",
+        IconColor = Grey,
+        IconShape = "Square",
+        Border = true,
+    })
+    
+    UniversalTab:Button({
+        Title = "Infinite Yield",
+		Desc = "100+ Admin Commands",
+        Justify = "Center",
+        Icon = "solar:infinity-linear",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+            WindUI:Notify({
+                Title = "Infinite Yield",
+                Content = "Script has been executed!",
+                Duration = 3
+            })
+        end
+    })
+    
+    UniversalTab:Space()
+    
+    UniversalTab:Button({
+        Title = "Dex Explorer",
+		Desc = "Explores game files",
+        Justify = "Center",
+        Icon = "solar:map-point-bold",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/dex.lua"))()
+            WindUI:Notify({
+                Title = "Dex Explorer",
+                Content = "Script has been executed!",
+                Duration = 3
+            })
+        end
+    })
+    
+    UniversalTab:Space()
+    
+    UniversalTab:Button({
+        Title = "Universal Aimbot",
+		Desc = "Aimbot working in most games",
+        Justify = "Center",
+        Icon = "solar:target-bold",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/ReWelp/ChairHub./refs/heads/main/universalaimbot.lua", true))()
+            WindUI:Notify({
+                Title = "Universal Aimbot",
+                Content = "Script has been executed!",
+                Duration = 3
+            })
+        end
+    })
+    
+    UniversalTab:Space()
+    
+    UniversalTab:Button({
+        Title = "Hitbox Expander",
+		Desc = "Expands the hitbox of everything",
+        Justify = "Center",
+        Icon = "solar:box-bold",
+        Callback = function()
+            loadstring(game:HttpGet("https://luaseal.com/cdn/loader/nXs5VwhleQTO"))()
+            WindUI:Notify({
+                Title = "Hitbox Expander",
+                Content = "Script has been executed!",
+                Duration = 3
+            })
+        end
+    })
+    
+    UniversalTab:Space()
+    
+    UniversalTab:Button({
+        Title = "Cryonix Hub",
+		Desc = "Lots of scripts inside",
+        Justify = "Center",
+        Icon = "solar:snowflake-bold",
+        Callback = function()
+            loadstring(game:HttpGet('https://raw.githubusercontent.com/idcgj36/CryonixHub/refs/heads/main/Main.lua'))()
+            WindUI:Notify({
+                Title = "Cryonix Hub",
+                Content = "Script has been executed!",
+                Duration = 3
+            })
+        end
+    })
+    
+    UniversalTab:Space()
+    
+    UniversalTab:Button({
+        Title = "Chat Bypasser",
+		Desc = "The key is typethisout",
+        Justify = "Center",
+        Icon = "solar:chat-dots-bold",
+        Callback = function()
+            loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/a675d4a69c2e1d8e301a4af260fb719b.lua"))()
+            WindUI:Notify({
+                Title = "Chat Bypasser",
+                Content = "Script has been executed!",
+                Duration = 3
+            })
+        end
+    })
+end
+
+
+-- */  Steal A Brainrot Tab  /* --
+do
+    local BrainrotTab = ElementsSection:Tab({
+        Title = "Steal A Brainrot",
+        Icon = "solar:ghost-bold",
+        IconColor = Green,
+        IconShape = "Square",
+        Border = true,
+    })
+    
+    BrainrotTab:Button({
+        Title = "(UNPATCHED) Auto Moreira",
+		Desc = "Make bots with high tier brainrots join your private server. For bots to join: Privacy Settings > Private Server > Everyone",
+        Justify = "Center",
+        Icon = "",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/adaptyzz/vault/refs/heads/main/moreira"))()
+            WindUI:Notify({
+                Title = "Auto Moreira",
+                Content = "Script has been executed!",
+                Duration = 3
+            })
+        end
+    })
+    
+    BrainrotTab:Space()
+    
+    BrainrotTab:Button({
+        Title = "TRAX Brainrot Spawner (Key)",
+		Desc = "Spawn FREE Brainrots!",
+        Justify = "Center",
+        Icon = "solar:rocket-bold",
+        Callback = function()
+            loadstring(game:HttpGet("https://gitlab.com/traxscriptss/traxscriptss/-/raw/main/visual2.lua"))()
+            WindUI:Notify({
+                Title = "TRAX Brainrot Spawner (Key)",
+                Content = "Script has been executed!",
+                Duration = 3
+            })
+        end
+    })
+    
+    BrainrotTab:Space()
+    
+    BrainrotTab:Button({
+        Title = "Overflow Hub (KEY)",
+		Desc = "OP Script Hub for SAB",
+        Justify = "Center",
+        Icon = "solar:code-circle-bold",
+        Callback = function()
+            loadstring(game:HttpGet("https://overflow.cx/loader.html"))()
+            WindUI:Notify({
+                Title = "Overflow Hub",
+                Content = "Script has been executed!",
+                Duration = 3
+            })
+        end
+    })
+    
+    BrainrotTab:Space()
+    
+    BrainrotTab:Button({
+        Title = "Nicuse Hub (Key)",
+		Desc = "OP Script Hub for SAB",
+        Justify = "Center",
+        Icon = "solar:hashtag-circle-bold",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/Nicuse101/RobloxUtils/refs/heads/master/StealABrainrotNew.lua", true))()
+            WindUI:Notify({
+                Title = "Nicuse Hub",
+                Content = "Script has been executed!",
+                Duration = 3
+            })
+        end
+    })
+    
+    BrainrotTab:Space()
+    
+    BrainrotTab:Button({
+        Title = "Chilli Hub (Keyless)",
+		Desc = "Best SAB Desync",
+        Justify = "Center",
+        Icon = "solar:cup-hot-bold",
+        Callback = function()
+           loadstring(game:HttpGet("https://raw.githubusercontent.com/tienkhanh1/spicy/main/Chilli.lua"))()
+            WindUI:Notify({
+                Title = "Chilli Hub",
+                Content = "Script has been executed!",
+                Duration = 3
+            })
+        end
+    })
+    
+    BrainrotTab:Space()
+    
+    BrainrotTab:Button({
+        Title = "Lemon Hub (Keyless)",
+		Desc = "Good desync for SAB PvP",
+        Justify = "Center",
+        Icon = "solar:donut-bitten-bold",
+        Callback = function()
+            loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/2341c827712daf923191e93377656f67.lua"))()
+            WindUI:Notify({
+                Title = "Lemon Hub",
+                Content = "Script has been executed!",
+                Duration = 3
+            })
+        end
+    })
+end
+
+
+-- */  Adopt Me Tab  /* --
+do
+    local AdoptMeTab = ElementsSection:Tab({
+        Title = "Adopt Me",
+        Icon = "solar:heart-angle-bold",
+        IconColor = Blue,
+        IconShape = "Square",
+        Border = true,
+    })
+    
+    AdoptMeTab:Button({
+        Title = "Pet Spawner (Tradeable)",
+		Desc = "Spawn real and tradeable Adopt Me pets!",
+        Justify = "Center",
+        Icon = "solar:heart-pulse-outline",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/adaptyzz/vault/refs/heads/main/spawner"))()
+            WindUI:Notify({
+                Title = "Pet Spawner (Tradeable)",
+                Content = "Script has been executed!",
+                Duration = 3
+            })
+        end
+    })
+    
+    AdoptMeTab:Space()
+    
+    AdoptMeTab:Button({
+        Title = "Auto Gingerbread Farm (Keyless)",
+		Desc = "Autofarms Gingerbread for you",
+        Justify = "Center",
+        Icon = "solar:gift-bold",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/adaptyzz/vault/refs/heads/main/adoptmehub"))()
+            WindUI:Notify({
+                Title = "Auto Gingerbread Farm (Keyless)",
+                Content = "Script has been executed!",
+                Duration = 3
+            })
+        end
+    })
+    
+    AdoptMeTab:Space()
+    
+    AdoptMeTab:Button({
+        Title = "House Cloner",
+		Desc = "Clone peoples houses",
+        Justify = "Center",
+        Icon = "solar:buildings-2-bold",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/adaptyzz/vault/refs/heads/main/hause"))()
+            WindUI:Notify({
+                Title = "House Cloner",
+                Content = "Script has been executed!",
+                Duration = 3
+            })
+        end
+    })
+    
+    AdoptMeTab:Space()
+    
+    AdoptMeTab:Button({
+        Title = "House Cloner 2",
+		Desc = "Clone people houses from template",
+        Justify = "Center",
+        Icon = "solar:home-angle-bold",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/adaptyzz/vault/refs/heads/main/houseclone"))()
+            WindUI:Notify({
+                Title = "House Cloner 2",
+                Content = "Script has been executed!",
+                Duration = 3
+            })
+        end
+    })
+    
+    AdoptMeTab:Space()
+    
+    AdoptMeTab:Button({
+        Title = "Ragesploit Hub (Key)",
+		Desc = "AutoFarm, AutoMinigames, and MORE",
+        Justify = "Center",
+        Icon = "solar:shield-bold",
+        Callback = function()
+            loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/875033288c5e99d576622aced60a0c44.lua"))()
+            WindUI:Notify({
+                Title = "Ragesploit Hub",
+                Content = "Script has been executed!",
+                Duration = 3
+            })
+        end
+    })
+end
+
+
+-- */  Murder Mystery 2 Tab  /* --
+do
+    local MM2Tab = ElementsSection:Tab({
+        Title = "Murder Mystery 2",
+        Icon = "solar:shield-warning-bold",
+        IconColor = Purple,
+        IconShape = "Square",
+        Border = true,
+    })
+    
+    MM2Tab:Button({
+        Title = "Vertex Hub (BEST - Keyless)",
+		Desc = "The Complete MM2 Script",
+        Justify = "Center",
+        Icon = "solar:server-2-bold",
+        Callback = function()
+            loadstring(game:HttpGet('https://raw.smokingscripts.org/vertex.lua'))()
+            WindUI:Notify({
+                Title = "Vertex Hub",
+                Content = "Script has been executed!",
+                Duration = 3
+            })
+        end
+    })
+    
+    MM2Tab:Space()
+    
+    MM2Tab:Button({
+        Title = "YAHRM (Keyless)",
+		Desc = "MM2 Scripts, Aimbot, Univeral Hub",
+        Justify = "Center",
+        Icon = "solar:shield-network-bold",
+        Callback = function()
+            -- loadstring will go here
+            WindUI:Notify({
+                Title = "YAHRM",
+                Content = "Script has been executed!",
+                Duration = 3
+            })
+        end
+    })
+    
+    MM2Tab:Space()
+    
+    MM2Tab:Button({
+        Title = "Forge Hub (Key)",
+		Desc = "Script Hub with Many Features for MM2",
+        Justify = "Center",
+        Icon = "solar:sledgehammer-bold",
+        Callback = function()
+            loadstring(game:HttpGet("https://api.luarmor.net/files/v3/loaders/d5ed1fbd4301b1d18d75153c5b47181d.lua"))()
+            WindUI:Notify({
+                Title = "Forge Hub",
+                Content = "Script has been executed!",
+                Duration = 3
+            })
+        end
+    })
+    
+    MM2Tab:Space()
+    
+    MM2Tab:Button({
+        Title = "Moondiety (Key)",
+		Desc = "MM2 Script Hub, Universal Script",
+        Justify = "Center",
+        Icon = "solar:moon-bold",
+        Callback = function()
+            loadstring(game:HttpGet('https://raw.githubusercontent.com/m00ndiety/Moondiety/refs/heads/main/Loader'))()
+            WindUI:Notify({
+                Title = "Moondiety",
+                Content = "Script has been executed!",
+                Duration = 3
+            })
+        end
+    })
+    
+    MM2Tab:Space()
+    
+    MM2Tab:Button({
+        Title = "Syl Hub (Key)",
+		Desc = "BEST Aimbot for MM2",
+        Justify = "Center",
+        Icon = "solar:user-hand-up-bold",
+        Callback = function()
+            loadstring(game:HttpGet('https://raw.githubusercontent.com/de-ishi/syl/refs/heads/main/mainLoader'))()
+            WindUI:Notify({
+                Title = "Syl Hub",
+                Content = "Script has been executed!",
+                Duration = 3
+            })
+        end
+    })
+    
+    MM2Tab:Space()
+    
+    MM2Tab:Button({
+        Title = "Sorlua Hub (Key)",
+		Desc = "Collection of Useful MM2 Scripts",
+        Justify = "Center",
+        Icon = "solar:cup-broken",
+        Callback = function()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/sorlua/Projects/refs/heads/main/Roblox/loader.lua"))()
+            WindUI:Notify({
+                Title = "Sorlua Hub",
+                Content = "Script has been executed!",
+                Duration = 3
+            })
+        end
+    })
+end
+
+
+-- */  Miscellaneous Tab  /* --
+do
+    local MiscTab = ElementsSection:Tab({
+        Title = "Miscellaneous",
+        Icon = "solar:settings-bold",
+        IconColor = Green,
+        IconShape = "Square",
+        Border = true,
+    })
+    
+MiscTab:Button({
+    Title = "Anti AFK",
+    Justify = "Center",
+    Icon = "solar:mouse-bold",
+    Callback = function()
+        local Players = game:GetService("Players")
+        local VirtualUser = game:GetService("VirtualUser")
+        local player = Players.LocalPlayer
+
+        player.Idled:Connect(function()
+            VirtualUser:Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+            wait(1)
+            VirtualUser:Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+            print("Anti AFK triggered")
+        end)
+
+        WindUI:Notify({
+            Title = "Anti AFK",
+            Content = "Anti AFK activated!",
+            Duration = 3
+        })
+    end
+})
+    
+    MiscTab:Space()
+    
+    MiscTab:Button({
+        Title = "Rejoin Server",
+        Justify = "Center",
+        Icon = "solar:refresh-circle-bold",
+        Callback = function()
+        local Players = game:GetService("Players")
+        local TeleportService = game:GetService("TeleportService")
+        local player = Players.LocalPlayer
+        local placeId = game.PlaceId
+
+        TeleportService:Teleport(placeId, player)
+		
+            WindUI:Notify({
+                Title = "Misc Script 2",
+                Content = "Script has been executed!",
+                Duration = 3
+            })
+        end
+    })
+    
+    MiscTab:Space()
+    
+MiscTab:Button({
+    Title = "Server Hop",
+    Justify = "Center",
+    Icon = "solar:shuffle-bold",
+    Callback = function()
+        -- Server Hop
+        local HttpService = game:GetService("HttpService")
+        local TeleportService = game:GetService("TeleportService")
+        local Players = game:GetService("Players")
+        local placeId = game.PlaceId
+        local player = Players.LocalPlayer
+        local servers = {}
+
+        local success, response = pcall(function()
+            return HttpService:JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/"..placeId.."/servers/Public?sortOrder=Asc&limit=100"))
+        end)
+
+        if success and response and response.data then
+            for _, server in pairs(response.data) do
+                if server.id ~= game.JobId and server.playing < server.maxPlayers then
+                    table.insert(servers, server.id)
+                end
+            end
+        end
+
+        if #servers > 0 then
+            local randomServer = servers[math.random(1, #servers)]
+            TeleportService:TeleportToPlaceInstance(placeId, randomServer, player)
+        else
+            warn("No available servers to hop to!")
+        end
+
+        WindUI:Notify({
+            Title = "Misc Script 3",
+            Content = "Server hop executed!",
+            Duration = 3
+        })
+    end
+})
+    
+    MiscTab:Space()
+    
+    MiscTab:Slider({
+        Title = "WalkSpeed Changer",
+		Desc = "Changes how fast you run",
+		IsTooltip = true,
+        IsTextbox = false,
+		Step = 1,
+		 Value = {
+            Min = 0,
+            Max = 300,
+            Default = 16,
+        },
+    Callback = function(value) -- the slider value is passed as 'value'
+        local player = game:GetService("Players").LocalPlayer
+        if player and player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.WalkSpeed = value
+        end
+    end
+})
+    
+    MiscTab:Space()
+    
+    MiscTab:Slider({
+        Title = "JumpPower Changer",
+		Desc = "Changes how high you jump",
+		IsTooltip = true,
+        IsTextbox = false,
+		Step = 1,
+		 Value = {
+            Min = 50,
+            Max = 300,
+            Default = 50,
+        },
+    Icon = "",
+    Callback = function(value) -- the slider value is passed as 'value'
+        local player = game:GetService("Players").LocalPlayer
+        if player and player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.JumpPower = value
+        end
+    end
+})
+    
+    MiscTab:Space()
+    
+    MiscTab:Button({
+        Title = "FPS Booster",
+		Desc = "Boosts your fps",
+        Justify = "Center",
+        Icon = "solar:rocket-2-bold",
+        Callback = function()
+            -- loadstring will go here
+            WindUI:Notify({
+                Title = "Misc Script 6",
+                Content = "Script has been executed!",
+                Duration = 3
+            })
+        end
+    })
+end
+
+
+-- */  Credits Tab  /* --
+do
+    local CreditsTab = ElementsSection:Tab({
+        Title = "Credits",
+        Icon = "solar:users-group-rounded-bold",
+        IconColor = Yellow,
+        IconShape = "Square",
+        Border = true,
+    })
+    
+    CreditsTab:Paragraph({
+        Title = "Join our Community!",
+        Desc = "Connect with other users and get updates. Click below to copy our Discord invite link."
+    })
+    
+    CreditsTab:Space()
+    
+    CreditsTab:Button({
+        Title = "Copy Discord Link",
+        Justify = "Center",
+        Icon = "solar:link-bold",
+        Callback = function()
+            setclipboard("discord.gg/BaQbggMfvH")
+            WindUI:Notify({
+                Title = "Discord Link Copied!",
+                Content = "The Discord invite link has been copied to your clipboard.",
+                Duration = 3
+            })
+        end
+    })
+end
