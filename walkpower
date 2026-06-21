@@ -515,7 +515,7 @@ do
 
         Icon = "solar:home-angle-bold",
         Callback = function()
-            loadstring(game:HttpGet("https://raw.githubusercontent.com/adaptyzz/vault/refs/heads/main/lod"))()
+            loadstring(game:HttpGet("https://raw.githubusercontent.com/adaptyzz/vault/refs/heads/main/rilhaus"))()
             WindUI:Notify({
                 Title = "House Cloner",
                 Content = "Script has been executed!",
